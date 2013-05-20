@@ -1,0 +1,78 @@
+<html>
+	<head>
+		<script src='http://code.jquery.com/jquery-1.9.1.min.js'></script>
+		<script type='text/javascript'>
+			var x = 20;
+			var y = 23;
+			var celulas = Array(x);
+			
+			function inicializarCelulas(){
+				//inicializar celulas
+				for(var i=0;i<x;i++){
+					celulas[i] = Array(y);
+					for(var j=0;j<y;j++){
+						celulas[i][j] = false;
+					}
+				}	
+			}
+
+			function renderizarTabuleiro(){
+				//inicializando tabuleiro
+				console.log('renderizarTabuleiro');
+				$("#tabuleiro").html(null);
+				for(var i=0;i<x;i++){
+					var coluna = $('<tr/>');
+					var linha = $('<td/>');
+					for(var j=0;j<y;j++){
+						if(celulas[i][j]){
+							linha.addClass('viva');	
+						}else{
+							linha.addClass('morta');	
+						}
+						linha.attr('i',i).attr('j',j);
+						coluna.append(linha.clone());
+					}
+				    $("#tabuleiro").append(coluna.clone());
+				}	
+			}
+
+			$(function(){
+				
+				inicializarCelulas();
+
+				setInterval(renderizarTabuleiro(),1000);
+
+				$('td').click(function(){
+					var i = $(this).attr('i');
+					var j = $(this).attr('j');
+					celulas[i][j] = !celulas[i][j];
+				})
+			})	
+		</script>
+		<style type='text/css'>      
+			table{ 
+				border-bottom:1px solid #ccc;  
+				border-left:1px solid #ccc; 
+			}
+			td {
+				border:1px solid #ccc; 
+				width:2px;
+				height:5px; 
+				border-bottom:none; 
+				border-left:none;
+			}
+
+			td.morta {
+				background-color: white;
+			}
+			td.viva {
+				background-color: black;
+			}
+		</style>
+	</head>
+	<body>
+	  <table id='tabuleiro' cellpadding='1' cellspacing='0'>
+	    
+	  </table>
+	</body>
+</html>
