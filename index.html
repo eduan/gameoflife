@@ -11,9 +11,25 @@
 				for(var i=0;i<x;i++){
 					celulas[i] = Array(y);
 					for(var j=0;j<y;j++){
-						celulas[i][j] = false;
+						celulas[i][j] = 0;
 					}
 				}	
+			}
+		
+			function visualizarCelulas(){
+				//inicializar celulas
+				for(var i=0;i<x;i++){
+					console.log(JSON.stringify(celulas[i]));
+				}	
+			}
+
+			function inicializarEventos(){
+				$('td').click(function(){
+					var i = $(this).attr('i');
+					var j = $(this).attr('j');
+					celulas[i][j] = !celulas[i][j];
+					$(this).toggleClass('viva');
+				})
 			}
 
 			function renderizarTabuleiro(){
@@ -24,29 +40,29 @@
 					var coluna = $('<tr/>');
 					var linha = $('<td/>');
 					for(var j=0;j<y;j++){
+						
+						linha.removeClass('viva');
+
 						if(celulas[i][j]){
 							linha.addClass('viva');	
-						}else{
-							linha.addClass('morta');	
 						}
-						linha.attr('i',i).attr('j',j);
+
+						linha.attr('i', i).attr('j', j);
 						coluna.append(linha.clone());
 					}
 				    $("#tabuleiro").append(coluna.clone());
 				}	
+				
+				inicializarEventos();
+
 			}
 
 			$(function(){
 				
 				inicializarCelulas();
 
-				setInterval(renderizarTabuleiro(),1000);
+				setInterval('renderizarTabuleiro()', 1000);
 
-				$('td').click(function(){
-					var i = $(this).attr('i');
-					var j = $(this).attr('j');
-					celulas[i][j] = !celulas[i][j];
-				})
 			})	
 		</script>
 		<style type='text/css'>      
@@ -54,6 +70,11 @@
 				border-bottom:1px solid #ccc;  
 				border-left:1px solid #ccc; 
 			}
+			
+			table * { 
+				cursor:pointer; 
+			}
+
 			td {
 				border:1px solid #ccc; 
 				width:2px;
@@ -62,9 +83,10 @@
 				border-left:none;
 			}
 
-			td.morta {
+			td {
 				background-color: white;
 			}
+			
 			td.viva {
 				background-color: black;
 			}
