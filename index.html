@@ -6,7 +6,18 @@
 			var x = 20;
 			var y = 23;
 			var celulas = Array(x);
+			var celulasTmp = null;
 			var frames = 0;
+			
+			/*class*/
+			function Celula(x, y) {
+			    this.x = x;
+			    this.y = y;
+			    this.viva = false;
+			    this.isViva = function() {
+			        return this.viva;
+			    };
+			}
 
 			function inicializarCelulas(){
 				//inicializar celulas
@@ -19,6 +30,7 @@
 			}
 		
 			function visualizarCelulas(){
+				console.clear()
 				//inicializar celulas
 				for(var i=0;i<x;i++){
 					console.log(JSON.stringify(celulas[i]));
@@ -27,16 +39,17 @@
 
 			function reagir(a,b){
 				var vizinhos = 0;
- 				for(var h = a-1; h < a+2; h++){
-					for(var k = b-1; k < b+2; k++){
-						console.log('['+h+','+k+']');
-						if(celulas[h][k]){
-							vizinhos++;
+ 				for(var h = a - 1; h < a + 2; h++){
+					for(var k = b - 1; k < b + 2; k++){
+						if(h > -1 && k > -1 && h < x  && k < y){
+							if(!(h == a && k == b) && celulas[h][k]){
+								vizinhos++;
+							}
 						}
 					}
 				}	
-
-				if((vizinhos<2 || vizinhos >3) && celulas[a][b]){
+				
+				if((vizinhos < 2 || vizinhos > 3) && celulas[a][b]){
 					celulas[a][b] = false;
 				}else if(vizinhos == 3 && !celulas[a][b]){
 					celulas[a][b] = true;
@@ -57,9 +70,8 @@
 
 			function renderizarTabuleiro(){
 				$('.counter').text(frames++);
-				//inicializando tabuleiro
-				console.log('renderizarTabuleiro');
 				$("#tabuleiro").empty();
+				
 				for(var i=0;i<x;i++){
 					var coluna = $('<tr/>');
 					var linha = $('<td/>');
@@ -90,7 +102,7 @@
 				
 				inicializarCelulas();
 
-				setInterval('renderizarTabuleiro()',1000);
+				renderizarTabuleiro();
 
 			})	
 		</script>
@@ -126,5 +138,6 @@
 	    
 	  </table>
 	  <span class='counter'>0</span>
+	  <a href="javascript:visualizarCelulas(); renderizarTabuleiro(); //setInterval('renderizarTabuleiro()',500); ">start</a>
 	</body>
 </html>
