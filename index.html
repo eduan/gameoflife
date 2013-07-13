@@ -3,8 +3,8 @@
 		<!--script src='http://code.jquery.com/jquery-1.9.1.min.js'></script-->
 		<script src='zepto.min.js'></script>
 		<script type='text/javascript'>
-			var x = 20;
-			var y = 23;
+			var x = 40;
+			var y = 40;
 			var celulas = Array(x);
 			var celulasTmp = null;
 			var frames = 0;
@@ -42,7 +42,7 @@
  				for(var h = a - 1; h < a + 2; h++){
 					for(var k = b - 1; k < b + 2; k++){
 						if(h > -1 && k > -1 && h < x  && k < y){
-							if(!(h == a && k == b) && celulas[h][k]){
+							if(!(h == a && k == b) && celulasTmp[h][k]){
 								vizinhos++;
 							}
 						}
@@ -58,7 +58,7 @@
 
 
 			function inicializarEventos(){
-				$('td').click(function(){
+				$('td').mouseover(function(){
 					var i = $(this).attr('i');
 					var j = $(this).attr('j');
 					celulas[i][j] = !celulas[i][j];
@@ -71,7 +71,7 @@
 			function renderizarTabuleiro(){
 				$('.counter').text(frames++);
 				$("#tabuleiro").empty();
-				
+				celulasTmp = JSON.parse(JSON.stringify(celulas));
 				for(var i=0;i<x;i++){
 					var coluna = $('<tr/>');
 					var linha = $('<td/>');
@@ -91,7 +91,8 @@
 					}
 
 				    $("#tabuleiro").append(coluna.clone());
-				    coluna.detach();
+				    coluna = null;
+				    linha = null;
 				}	
 				
 				inicializarEventos();
@@ -118,8 +119,8 @@
 
 			td {
 				border:1px solid #ccc; 
-				width:10px;
-				height:10px; 
+				width:3px;
+				height:5px; 
 				border-bottom:none; 
 				border-left:none;
 			}
@@ -138,6 +139,6 @@
 	    
 	  </table>
 	  <span class='counter'>0</span>
-	  <a href="javascript:visualizarCelulas(); renderizarTabuleiro(); //setInterval('renderizarTabuleiro()',500); ">start</a>
+	  <a href="javascript:setInterval('renderizarTabuleiro()',100); ">start</a>
 	</body>
 </html>
