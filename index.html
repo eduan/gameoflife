@@ -3,8 +3,8 @@
 		<!--script src='http://code.jquery.com/jquery-1.9.1.min.js'></script-->
 		<script src='zepto.min.js'></script>
 		<script type='text/javascript'>
-			var x = 40;
-			var y = 40;
+			var x = 20;
+			var y = 20;
 			var celulas = Array(x);
 			var celulasTmp = null;
 			var frames = 0;
@@ -91,6 +91,7 @@
 					}
 
 				    $("#tabuleiro").append(coluna.clone());
+					delete(celulasTmp);
 				    coluna = null;
 				    linha = null;
 				}	
@@ -139,6 +140,6 @@
 	    
 	  </table>
 	  <span class='counter'>0</span>
-	  <a href="javascript:setInterval('renderizarTabuleiro()',100); ">start</a>
+	  <a href="javascript:renderizarTabuleiro(); //console.log(setInterval('renderizarTabuleiro()',100)); ">start</a>
 	</body>
 </html>
