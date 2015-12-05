@@ -11,7 +11,7 @@
             }
 
             td {
-                border:1px solid #ccc; 
+                border:1px solid #ccc   ; 
                 width:3px;
                 height:5px; 
                 border-bottom:none; 
@@ -45,7 +45,6 @@
                 }
                 
                 react(){
-
                     if((this.getLiveNeighborhood() < LESSPOPULATION || this.getLiveNeighborhood() > IDEALPOPULATION)  && this.status){
                         this.nextStatus = false;    
                     }else if(this.getLiveNeighborhood() == IDEALPOPULATION && !this.status){
@@ -163,7 +162,11 @@
             }
 
             let c = new Colony();
-            RenderFactory.getInstance('html', c.initialize()).doRender();
-            setInterval(function(){RenderFactory.getInstance('html', c.runOnCycle()).doRender()} ,100);
+            c.initialize()
+            function RenderAll() {
+                RenderFactory.getInstance('html', c.runOnCycle()).doRender()
+                requestAnimationFrame(RenderAll);
+            }
+            RenderAll();
         </script>
 </html>
