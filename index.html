@@ -1,10 +1,38 @@
 <html>
     <head>
-        <!--script src='http://code.jquery.com/jquery-1.9.1.min.js'></script-->
-        <script src='zepto.min.js'></script>
-        <script type='text/javascript'>
+         <style type='text/css'>      
+            table{ 
+                border-bottom:1px solid #ccc;  
+                border-left:1px solid #ccc; 
+            }
+            
+            table * { 
+                cursor:pointer; 
+            }
+
+            td {
+                border:1px solid #ccc; 
+                width:3px;
+                height:5px; 
+                border-bottom:none; 
+                border-left:none;
+            }
+
+            td {
+                background-color: white;
+            }
+            
+            td.viva {
+                background-color: black;
+            }
+        </style>
+    </head>
+    <body>
+        <table id="canvas"></table>
+    </body>
+            <script type='text/javascript'>
             "use strict";
-            const XY = 100;
+            const XY = 50;
             const IDEALPOPULATION = 3
             const LESSPOPULATION = 2
             class Cell{
@@ -111,7 +139,15 @@
 
             class RenderHTML extends Render{
                 doRender(){
-                   /**...*/
+                    var matrix = '';
+                    for (var i = 0; i < XY; i++) {
+                        matrix += "<tr>";
+                        for (var j = 0; j < XY; j++) {
+                            matrix += "<td " + (this.colony.cells[i][j].status ? 'class="viva"' : '') + "></td>";
+                        }
+                        matrix += "</tr>";
+                    }
+                    document.getElementById("canvas").innerHTML = matrix
                 }
             }
 
@@ -120,45 +156,14 @@
                     switch(type){
                         case 'txt':
                             return new RenderTXT(colony)
+                        case 'html':
+                            return new RenderHTML(colony)
                     }
                 }
             }
 
             let c = new Colony();
-            RenderFactory.getInstance('txt', c.initialize()).doRender();
-            setInterval(function(){
-                RenderFactory.getInst   ance('txt', c.runOnCycle()).doRender()}
-                ,100);
+            RenderFactory.getInstance('html', c.initialize()).doRender();
+            setInterval(function(){RenderFactory.getInstance('html', c.runOnCycle()).doRender()} ,100);
         </script>
-        <style type='text/css'>      
-            table{ 
-                border-bottom:1px solid #ccc;  
-                border-left:1px solid #ccc; 
-            }
-            
-            table * { 
-                cursor:pointer; 
-            }
-
-            td {
-                border:1px solid #ccc; 
-                width:3px;
-                height:5px; 
-                border-bottom:none; 
-                border-left:none;
-            }
-
-            td {
-                background-color: white;
-            }
-            
-            td.viva {
-                background-color: black;
-            }
-        </style>
-    </head>
-    <body>
-      <span class='counter'>0</span>
-      <a href="javascript:proximoStatusTabuleiro(); //console.log(setInterval('renderizarTabuleiro()',100)); ">start</a>
-    </body>
 </html>
