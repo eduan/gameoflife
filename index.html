@@ -1,145 +1,118 @@
 <html>
-	<head>
-		<!--script src='http://code.jquery.com/jquery-1.9.1.min.js'></script-->
-		<script src='zepto.min.js'></script>
-		<script type='text/javascript'>
-			var x = 20;
-			var y = 20;
-			var celulas = Array(x);
-			var celulasTmp = null;
-			var frames = 0;
-			
-			/*class*/
-			function Celula(x, y) {
-			    this.x = x;
-			    this.y = y;
-			    this.viva = false;
-			    this.isViva = function() {
-			        return this.viva;
-			    };
-			}
+    <head>
+        <!--script src='http://code.jquery.com/jquery-1.9.1.min.js'></script-->
+        <script src='zepto.min.js'></script>
+        <script type='text/javascript'>
+            "use strict";
+            const XY = 10;
+            
+            class Celula{
+                constructor(x, y){
+                    this.x = x;
+                    this.y = y;
+                    this.status = false;
+                }
+            }
 
-			function inicializarCelulas(){
-				//inicializar celulas
-				for(var i=0;i<x;i++){
-					celulas[i] = Array(y);
-					for(var j=0;j<y;j++){
-						celulas[i][j] = 0;
-					}
-				}	
-			}
-		
-			function visualizarCelulas(){
-				console.clear()
-				//inicializar celulas
-				for(var i=0;i<x;i++){
-					console.log(JSON.stringify(celulas[i]));
-				}	
-			}
+            class Colonia{
+                
+                constructor(){
+                    this.celulas = new Array(XY)
+                    for (var i = 0; i < XY; i++) {
+                      this.celulas[i] = new Array(XY);
+                    }
+                }
+                
+                add(celula){
+                    this.celulas[celula.x][celula.y] = celula;
+                }
 
-			function reagir(a,b){
-				var vizinhos = 0;
- 				for(var h = a - 1; h < a + 2; h++){
-					for(var k = b - 1; k < b + 2; k++){
-						if(h > -1 && k > -1 && h < x  && k < y){
-							if(!(h == a && k == b) && celulasTmp[h][k]){
-								vizinhos++;
-							}
-						}
-					}
-				}	
-				
-				if((vizinhos < 2 || vizinhos > 3) && celulas[a][b]){
-					celulas[a][b] = false;
-				}else if(vizinhos == 3 && !celulas[a][b]){
-					celulas[a][b] = true;
-				}
-			}
+                initialize(){
+                    for (var i = 0; i < XY; i++) {
+                        for (var j = 0; j < XY; j++) {
+                            this.add(CelulasFactory.getInstance(i, j));
+                        }
+                    }
+                    return this;
+                }
+            }
+
+            class CelulasFactory{
+                static getInstance(x, y){
+                    return new Celula(x, y)
+                }
+            }
+
+            class Render{
+                constructor(colonia){
+                    this.colonia = colonia;
+                }
+                doRender(){
+                    throw 'It should be overwritten'; 
+                }
+            }
+
+            class RenderTXT extends Render{
+                doRender(){
+                    for (var i = 0; i < XY; i++) {
+                        console.log(this.colonia.celulas[i]);
+                    }
+                }
+            }
 
 
-			function inicializarEventos(){
-				$('td').mouseover(function(){
-					var i = $(this).attr('i');
-					var j = $(this).attr('j');
-					celulas[i][j] = !celulas[i][j];
-					$(this).toggleClass('viva');
-				})
-			}
+            class RenderHTML extends Render{
+                doRender(){
+                   /**...*/
+                }
+            }
 
-			
+            class RenderFactory{
+                static getInstance(type, colonia){
+                    switch(type){
+                        case 'txt':
+                            return new RenderTXT(colonia)
+                    }
+                }
+            }
 
-			function renderizarTabuleiro(){
-				$('.counter').text(frames++);
-				$("#tabuleiro").empty();
-				celulasTmp = JSON.parse(JSON.stringify(celulas));
-				for(var i=0;i<x;i++){
-					var coluna = $('<tr/>');
-					var linha = $('<td/>');
-					for(var j=0;j<y;j++){
-						
-						reagir(i,j);
 
-						linha.removeClass('viva');
+            let c = new Colonia();
+            RenderFactory.getInstance('txt', c.initialize()).doRender();
 
-						if(celulas[i][j]){
-							linha.addClass('viva');	
-						}
+        </script>
+        <style type='text/css'>      
+            table{ 
+                border-bottom:1px solid #ccc;  
+                border-left:1px solid #ccc; 
+            }
+            
+            table * { 
+                cursor:pointer; 
+            }
 
-						linha.attr('i', i).attr('j', j);
-						coluna.append(linha.clone());
-						linha.detach();
-					}
+            td {
+                border:1px solid #ccc; 
+                width:3px;
+                height:5px; 
+                border-bottom:none; 
+                border-left:none;
+            }
 
-				    $("#tabuleiro").append(coluna.clone());
-					delete(celulasTmp);
-				    coluna = null;
-				    linha = null;
-				}	
-				
-				inicializarEventos();
-
-			}
-
-			$(function(){
-				
-				inicializarCelulas();
-
-				renderizarTabuleiro();
-
-			})	
-		</script>
-		<style type='text/css'>      
-			table{ 
-				border-bottom:1px solid #ccc;  
-				border-left:1px solid #ccc; 
-			}
-			
-			table * { 
-				cursor:pointer; 
-			}
-
-			td {
-				border:1px solid #ccc; 
-				width:3px;
-				height:5px; 
-				border-bottom:none; 
-				border-left:none;
-			}
-
-			td {
-				background-color: white;
-			}
-			
-			td.viva {
-				background-color: black;
-			}
-		</style>
-	</head>
-	<body>
-	  <table id='tabuleiro' cellpadding='1' cellspacing='0'>
-	    
-	  </table>
-	  <span class='counter'>0</span>
-	  <a href="javascript:renderizarTabuleiro(); //console.log(setInterval('renderizarTabuleiro()',100)); ">start</a>
-	</body>
+            td {
+                background-color: white;
+            }
+            
+            td.viva {
+                background-color: black;
+            }
+        </style>
+    </head>
+    <body>
+      <table id='tabuleiro' cellpadding='1' cellspacing='0'>
+        
+      </table>
+      <span class='counter'>0</span>
+      <a href="javascript:proximoStatusTabuleiro(); //console.log(setInterval('renderizarTabuleiro()',100)); ">start</a>
+    </body>
 </html>
