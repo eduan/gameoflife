@@ -6,7 +6,7 @@
             "use strict";
             const XY = 10;
             
-            class Celula{
+            class Cell{
                 constructor(x, y){
                     this.x = x;
                     this.y = y;
@@ -14,38 +14,47 @@
                 }
             }
 
-            class Colonia{
+            class Colony{
                 
                 constructor(){
-                    this.celulas = new Array(XY)
+                    this.cells = new Array(XY)
                     for (var i = 0; i < XY; i++) {
-                      this.celulas[i] = new Array(XY);
+                      this.cells[i] = new Array(XY);
                     }
                 }
                 
-                add(celula){
-                    this.celulas[celula.x][celula.y] = celula;
+                add(cell){
+                    this.cells[cell.x][cell.y] = cell;
                 }
 
                 initialize(){
                     for (var i = 0; i < XY; i++) {
                         for (var j = 0; j < XY; j++) {
-                            this.add(CelulasFactory.getInstance(i, j));
+                            this.add(CellsFactory.getInstance(i, j));
+                        }
+                    }
+                    return this;
+                }
+
+                reagir(){
+                    for (var i = 0; i < XY; i++) {
+                        for (var j = 0; j < XY; j++) {
+                            this.add(CellsFactory.getInstance(i, j));
                         }
                     }
                     return this;
                 }
             }
 
-            class CelulasFactory{
+            class CellsFactory{
                 static getInstance(x, y){
-                    return new Celula(x, y)
+                    return new Cell(x, y)
                 }
             }
 
             class Render{
-                constructor(colonia){
-                    this.colonia = colonia;
+                constructor(colony){
+                    this.colony = colony;
                 }
                 doRender(){
                     throw 'It should be overwritten'; 
@@ -55,11 +64,10 @@
             class RenderTXT extends Render{
                 doRender(){
                     for (var i = 0; i < XY; i++) {
-                        console.log(this.colonia.celulas[i]);
+                        console.log(this.colony.cells[i]);
                     }
                 }
             }
-
 
             class RenderHTML extends Render{
                 doRender(){
@@ -68,16 +76,16 @@
             }
 
             class RenderFactory{
-                static getInstance(type, colonia){
+                static getInstance(type, colony){
                     switch(type){
                         case 'txt':
-                            return new RenderTXT(colonia)
+                            return new RenderTXT(colony)
                     }
                 }
             }
 
 
-            let c = new Colonia();
+            let c = new Colony();
             RenderFactory.getInstance('txt', c.initialize()).doRender();
 
         </script>
