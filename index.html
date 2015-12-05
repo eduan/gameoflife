@@ -4,13 +4,41 @@
         <script src='zepto.min.js'></script>
         <script type='text/javascript'>
             "use strict";
-            const XY = 10;
-            
+            const XY = 100;
+            const IDEALPOPULATION = 3
+            const LESSPOPULATION = 2
             class Cell{
-                constructor(x, y){
+                constructor(x, y, colony){
                     this.x = x;
                     this.y = y;
+                    this.colony = colony;
                     this.status = false;
+                    this.nextStatus = false;
+                }
+                
+                react(){
+
+                    if((this.getLiveNeighborhood() < LESSPOPULATION || this.getLiveNeighborhood() > IDEALPOPULATION)  && this.status){
+                        this.nextStatus = false;    
+                    }else if(this.getLiveNeighborhood() == IDEALPOPULATION && !this.status){
+                        this.nextStatus = true;    
+                    }else{
+                        this.nextStatus = this.status 
+                    }
+                }
+
+                getLiveNeighborhood(){
+                    var neighborhood = 0;
+                    for(var h = this.x - 1; h < this.x + 2; h++){
+                        for(var k = this.y - 1; k < this.y + 2; k++){
+                            if(h > -1 && k > -1 && h < XY  && k < XY){
+                                if(!(h == this.x && k == this.y) && this.colony.cells[h][k].status){
+                                    neighborhood++;
+                                }
+                            }
+                        }
+                    }   
+                    return neighborhood;
                 }
             }
 
@@ -30,16 +58,23 @@
                 initialize(){
                     for (var i = 0; i < XY; i++) {
                         for (var j = 0; j < XY; j++) {
-                            this.add(CellsFactory.getInstance(i, j));
+                            var cell = CellsFactory.getInstance(i, j, this);
+                            cell.status = (Math.round(Math.random() * 10)) % 2;
+                            this.add(cell);
                         }
                     }
                     return this;
                 }
-
-                reagir(){
+                runOnCycle(){
                     for (var i = 0; i < XY; i++) {
                         for (var j = 0; j < XY; j++) {
-                            this.add(CellsFactory.getInstance(i, j));
+                            this.cells[i][j].react();
+                        }
+                    }
+                    for (var i = 0; i < XY; i++) {
+                        for (var j = 0; j < XY; j++) {
+                            this.cells[i][j].status = this.cells[i][j].nextStatus;
+                            this.cells[i][j].nextStatus = this.cells[i][j].status;
                         }
                     }
                     return this;
@@ -47,8 +82,8 @@
             }
 
             class CellsFactory{
-                static getInstance(x, y){
-                    return new Cell(x, y)
+                static getInstance(x, y, colony){
+                    return new Cell(x, y, colony)
                 }
             }
 
@@ -63,9 +98,14 @@
 
             class RenderTXT extends Render{
                 doRender(){
+                    var matrix = '';
                     for (var i = 0; i < XY; i++) {
-                        console.log(this.colony.cells[i]);
+                        for (var j = 0; j < XY; j++) {
+                            matrix += this.colony.cells[i][j].status ? '*' : ' ';
+                        }
+                        matrix += "\n";
                     }
+                    console.log(matrix);
                 }
             }
 
@@ -84,10 +124,11 @@
                 }
             }
 
-
             let c = new Colony();
             RenderFactory.getInstance('txt', c.initialize()).doRender();
-
+            setInterval(function(){
+                RenderFactory.getInst   ance('txt', c.runOnCycle()).doRender()}
+                ,100);
         </script>
         <style type='text/css'>      
             table{ 
@@ -117,9 +158,6 @@
         </style>
     </head>
     <body>
-      <table id='tabuleiro' cellpadding='1' cellspacing='0'>
-        
-      </table>
       <span class='counter'>0</span>
       <a href="javascript:proximoStatusTabuleiro(); //console.log(setInterval('renderizarTabuleiro()',100)); ">start</a>
     </body>
