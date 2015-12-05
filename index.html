@@ -162,11 +162,7 @@
             }
 
             let c = new Colony();
-            c.initialize()
-            function RenderAll() {
-                RenderFactory.getInstance('html', c.runOnCycle()).doRender()
-                requestAnimationFrame(RenderAll);
-            }
-            RenderAll();
+            c.initialize();
+            setInterval(function(){RenderFactory.getInstance('html', c.runOnCycle()).doRender()}, 83);
         </script>
 </html>
